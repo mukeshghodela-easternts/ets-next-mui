@@ -39,9 +39,13 @@ import useScreenType from "./use-screen-type";
 
 type ToggleBannerProps = {
   data?: IBannerData;
+  loopTime?: number;
 };
 
-const ToggleBanner: React.FC<ToggleBannerProps> = ({ data }) => {
+const ToggleBanner: React.FC<ToggleBannerProps> = ({
+  data,
+  loopTime = 3000,
+}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [bannerItem, setBannerItem] = useState<IContentBannerItem | null>();
   const [bannerType, setBannerType] = useState<string>("hero-banner");
@@ -55,6 +59,26 @@ const ToggleBanner: React.FC<ToggleBannerProps> = ({ data }) => {
   const IMAGE_SIZES_TOGGLE_BANNER = "1080px";
   const ADVANTAGE_BANNER_ACCESSIBILITY_TEXT = "About OnePass";
 
+  const goToNextSlide = () => {
+    if (data) {
+      setCurrentIndex((prevIndex: number) =>
+        prevIndex === data?.homeBannerCollection.items.length - 1
+          ? 0
+          : prevIndex + 1
+      );
+    }
+  };
+
+  const goToPrevSlide = () => {
+    if (data) {
+      setCurrentIndex((prevIndex: number) =>
+        prevIndex === 0
+          ? data?.homeBannerCollection.items.length - 1
+          : prevIndex - 1
+      );
+    }
+  };
+
   useEffect(() => {
     if (data?.homeBannerCollection) {
       setContentBannerData(data?.homeBannerCollection.items[currentIndex]);
@@ -64,6 +88,7 @@ const ToggleBanner: React.FC<ToggleBannerProps> = ({ data }) => {
         );
       }
     }
+
     if (contentBannerData?.contentBannerCollection) {
       const bannerItemData =
         contentBannerData.contentBannerCollection?.items?.find(
@@ -73,7 +98,11 @@ const ToggleBanner: React.FC<ToggleBannerProps> = ({ data }) => {
 
       setBannerItem(bannerItemData);
     }
-  }, [currentIndex, contentBannerData]);
+
+    const interval = setInterval(goToNextSlide, loopTime);
+
+    return () => clearInterval(interval);
+  }, [currentIndex, contentBannerData, loopTime]);
 
   if (!data || !bannerItem) {
     return null;
@@ -91,21 +120,6 @@ const ToggleBanner: React.FC<ToggleBannerProps> = ({ data }) => {
     buttonTextColor,
   } = bannerItem;
 
-  const goToNextSlide = () => {
-    setCurrentIndex((prevIndex: number) =>
-      prevIndex === data?.homeBannerCollection.items.length - 1
-        ? 0
-        : prevIndex + 1
-    );
-  };
-
-  const goToPrevSlide = () => {
-    setCurrentIndex((prevIndex: number) =>
-      prevIndex === 0
-        ? data?.homeBannerCollection.items.length - 1
-        : prevIndex - 1
-    );
-  };
   return (
     <StyledToggleBanner
       theme={theme}
@@ -212,5 +226,4 @@ const ToggleBanner: React.FC<ToggleBannerProps> = ({ data }) => {
     </StyledToggleBanner>
   );
 };
-
 export default ToggleBanner;
