@@ -42,10 +42,7 @@ type ToggleBannerProps = {
   loopTime?: number;
 };
 
-const ToggleBanner: React.FC<ToggleBannerProps> = ({
-  data,
-  loopTime = 3000,
-}) => {
+const ToggleBanner: React.FC<ToggleBannerProps> = ({ data, loopTime }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [bannerItem, setBannerItem] = useState<IContentBannerItem | null>();
   const [bannerType, setBannerType] = useState<string>("hero-banner");
@@ -99,7 +96,10 @@ const ToggleBanner: React.FC<ToggleBannerProps> = ({
       setBannerItem(bannerItemData);
     }
 
-    const interval = setInterval(goToNextSlide, loopTime);
+    let interval: any;
+    if (loopTime) {
+      interval = setInterval(goToNextSlide, loopTime);
+    }
 
     return () => clearInterval(interval);
   }, [currentIndex, contentBannerData, loopTime]);

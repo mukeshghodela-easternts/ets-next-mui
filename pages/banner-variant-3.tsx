@@ -8,7 +8,7 @@ import theme from "../src/theme";
 export default function BannerVariant3() {
   return (
     <StyledFullBleed theme={theme} className="full-bleed">
-      <ToggleBanner data={bannerData}></ToggleBanner>;
+      <ToggleBanner data={bannerData} loopTime={3000}></ToggleBanner>;
     </StyledFullBleed>
   );
 }
